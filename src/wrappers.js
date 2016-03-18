@@ -116,7 +116,7 @@ export class Branch extends React.Component {
   }
 
   // On component mount
-  componentWillMount() {
+  componentDidMount() {
     if (!this.watcher)
       return;
 

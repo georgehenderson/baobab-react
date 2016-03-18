@@ -97,7 +97,7 @@ export function branch(Component, mapping=null) {
     }
 
     // On component mount
-    componentWillMount() {
+    componentDidMount() {
       if (!this.watcher)
         return;
 

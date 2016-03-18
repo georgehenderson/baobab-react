@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Baobab-React Mixins
  * ====================
@@ -21,7 +23,7 @@ function bindActions(actions) {
 
   this.actions = {};
 
-  Object.keys(actions).forEach(function(k) {
+  Object.keys(actions).forEach(function (k) {
     this.actions[k] = actions[k].bind(tree, tree);
   }, this);
 }
@@ -42,7 +44,7 @@ var RootMixin = {
   },
 
   // Handling child context
-  getChildContext: function() {
+  getChildContext: function getChildContext() {
     return {
       tree: this.props.tree
     };
@@ -60,7 +62,7 @@ var BranchMixin = {
   },
 
   // Building initial state
-  getInitialState: function() {
+  getInitialState: function getInitialState() {
     var name = displayName(this);
 
     if (this.actions) {
@@ -74,11 +76,7 @@ var BranchMixin = {
       var solvedMapping = helpers.solveMapping(this.__cursorsMapping, this.props, this.context);
 
       // The given cursors property should be valid
-      if (!solvedMapping)
-        throw makeError(
-          'baobab-react:mixins.branch: given mapping is invalid (check the "' + name + '" component).',
-          {mapping: solvedMapping}
-        );
+      if (!solvedMapping) throw makeError('baobab-react:mixins.branch: given mapping is invalid (check the "' + name + '" component).', { mapping: solvedMapping });
 
       // Creating the watcher
       this.__watcher = this.context.tree.watch(solvedMapping);
@@ -94,22 +92,19 @@ var BranchMixin = {
   },
 
   // On component mount
-  componentDidMount: function() {
-    if (!this.__watcher)
-      return;
+  componentDidMount: function componentDidMount() {
+    if (!this.__watcher) return;
 
-    var handler = (function() {
-      if (this.__watcher)
-        this.setState(this.__watcher.get());
-    }).bind(this);
+    var handler = function () {
+      if (this.__watcher) this.setState(this.__watcher.get());
+    }.bind(this);
 
     this.__watcher.on('update', handler);
   },
 
   // On component unmount
-  componentWillUnmount: function() {
-    if (!this.__watcher)
-      return;
+  componentWillUnmount: function componentWillUnmount() {
+    if (!this.__watcher) return;
 
     // Releasing facet
     this.__watcher.release();
@@ -117,18 +112,13 @@ var BranchMixin = {
   },
 
   // On new props
-  componentWillReceiveProps: function(props) {
-    if (!this.__watcher)
-      return;
+  componentWillReceiveProps: function componentWillReceiveProps(props) {
+    if (!this.__watcher) return;
 
     // Refreshing the watcher
     var solvedMapping = helpers.solveMapping(this.__cursorsMapping, props, this.context);
 
-    if (!solvedMapping)
-      throw makeError(
-        'baobab-react:mixins.branch: given mapping is invalid (check the "' + displayName(this) + '" component).',
-        {mapping: solvedMapping}
-      );
+    if (!solvedMapping) throw makeError('baobab-react:mixins.branch: given mapping is invalid (check the "' + displayName(this) + '" component).', { mapping: solvedMapping });
 
     this.__watcher.refresh(solvedMapping);
     this.cursors = this.__watcher.getCursors();
@@ -136,9 +126,8 @@ var BranchMixin = {
   },
 
   // On update
-  componentWillUpdate: function() {
-    if (this.__actionsMapping)
-      bindActions.call(this, this.__actionsMapping);
+  componentWillUpdate: function componentWillUpdate() {
+    if (this.__actionsMapping) bindActions.call(this, this.__actionsMapping);
   }
 };
 
